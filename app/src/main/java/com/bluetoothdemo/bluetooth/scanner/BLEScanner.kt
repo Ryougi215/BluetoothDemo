@@ -1,11 +1,11 @@
 package com.bluetoothdemo.bluetooth.scanner
 
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.le.BluetoothLeScanner
-import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanFilter
-import android.bluetooth.le.ScanSettings
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.le.*
+import android.util.Log
 import com.bluetoothdemo.Constants
+import com.bluetoothdemo.Utils
 
 
 class BLEScanner() {
@@ -48,6 +48,43 @@ class BLEScanner() {
         if (isScanning) {
             isScanning = false
             scanner.stopScan(callback)
+        }
+    }
+
+    inner class BLEScanCallback : ScanCallback() {
+        private val TAG = "BleScanCallback"
+
+        private fun processScanResult(scanResult: ScanResult?) {
+            val device: BluetoothDevice = scanResult?.device ?: return
+
+            val record: ScanRecord? = scanResult.scanRecord
+
+            record?.let {
+                val dataStream: ByteArray =
+                    it.manufacturerSpecificData.get(Constants.manufacture_id)
+                val id = Utils.transformFromByteArr(dataStream)
+                // TODO: 数据处理单元处理数据
+            }
+        }
+
+        override fun onScanResult(callbackType: Int, result: ScanResult?) {
+            super.onScanResult(callbackType, result)
+            processScanResult(result)
+        }
+
+        override fun onScanFailed(errorCode: Int) {
+            super.onScanFailed(errorCode)
+
+            val reason = when (errorCode) {
+                SCAN_FAILED_ALREADY_STARTED -> "$errorCode - SCAN_FAILED_ALREADY_STARTED"
+                SCAN_FAILED_APPLICATION_REGISTRATION_FAILED -> "$errorCode - SCAN_FAILED_APPLICATION_REGISTRATION_FAILED"
+                SCAN_FAILED_FEATURE_UNSUPPORTED -> "$errorCode - SCAN_FAILED_FEATURE_UNSUPPORTED"
+                SCAN_FAILED_INTERNAL_ERROR -> "$errorCode - SCAN_FAILED_INTERNAL_ERROR"
+                else -> {
+                    "$errorCode - UNDOCUMENTED"
+                }
+            }
+            Log.e(TAG, "BT Scan failed: $reason")
         }
     }
 
