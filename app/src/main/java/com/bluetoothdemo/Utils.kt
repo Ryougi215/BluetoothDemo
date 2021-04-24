@@ -1,15 +1,27 @@
 package com.bluetoothdemo
 
 import java.nio.ByteBuffer
+import java.nio.IntBuffer
 
 class Utils {
     companion object {
         fun transformFromByteArr(sourceData: ByteArray): Int {
-            val buffer = ByteBuffer.wrap(sourceData)
-            val intBuffer = buffer.asIntBuffer()
-            val intArr = IntArray(intBuffer.limit())
-            intBuffer.get(intArr)
-            return intBuffer[0]
+            var id = 0u
+            for ((index, byte) in sourceData.withIndex()) {
+                id += byte.toUByte().toUInt().shl(8 * index)
+            }
+            return id.toInt()
+        }
+
+        fun transformToByteArr(source: Int): ByteArray {
+            val target = byteArrayOf(0, 0, 0, 0)
+            var index = 0
+            while ((index < 4)) {
+                target[index] = (source.shr(8 * index) and 0xff).toByte()
+                index++
+            }
+            return target
         }
     }
+
 }

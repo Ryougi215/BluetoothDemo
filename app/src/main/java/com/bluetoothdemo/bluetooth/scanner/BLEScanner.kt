@@ -3,12 +3,13 @@ package com.bluetoothdemo.bluetooth.scanner
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.*
+import android.text.Editable
 import android.util.Log
 import com.bluetoothdemo.Constants
 import com.bluetoothdemo.Utils
 
 
-class BLEScanner() {
+class BLEScanner {
     companion object {
         const val TAG: String = "BLEScanner"
         val instance: BLEScanner by lazy(
@@ -18,28 +19,32 @@ class BLEScanner() {
     }
 
     private var isScanning: Boolean = false
-    private var callback: ScanCallback? = null
+    private var callback: ScanCallback? = MyScanCallback()
 
     private val scanner: BluetoothLeScanner =
         BluetoothAdapter.getDefaultAdapter().bluetoothLeScanner
     private val filters: ArrayList<ScanFilter> = ArrayList()
     private val filter: ScanFilter = ScanFilter.Builder()
-        .setDeviceName(Constants.deviceName)
+        .setServiceUuid(Constants.broadcastUuid)
         .build()
     private val settings: ScanSettings = ScanSettings.Builder()
         .setReportDelay(0)
         .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
         .build()
 
+    var listener: (Int) -> Unit = {}
+
+    fun setOnDataChangedListener(e: (Int) -> Unit) {
+        this.listener = e
+    }
+
     init {
         filters.add(filter)
     }
 
-    fun startScan(scanCallback: ScanCallback) {
-        scanCallback.also { this.callback = it }
-
+    fun startScan() {
         if (!isScanning) {
-            scanner.startScan(filters, settings, scanCallback)
+            scanner.startScan(filters, settings, callback)
             isScanning = true
         }
     }
@@ -51,7 +56,7 @@ class BLEScanner() {
         }
     }
 
-    inner class BLEScanCallback : ScanCallback() {
+    inner class MyScanCallback : ScanCallback() {
         private val TAG = "BleScanCallback"
 
         private fun processScanResult(scanResult: ScanResult?) {
@@ -63,7 +68,7 @@ class BLEScanner() {
                 val dataStream: ByteArray =
                     it.manufacturerSpecificData.get(Constants.manufacture_id)
                 val id = Utils.transformFromByteArr(dataStream)
-                // TODO: 数据处理单元处理数据
+                listener(id)
             }
         }
 

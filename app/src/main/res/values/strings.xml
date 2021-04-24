@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">BluetoothDemo</string>
+    <string name="id_code_input">身份编码:</string>
+    <string name="other_id_code">对方编码:</string>
+    <string name="start_advertising">开始广播</string>
+    <string name="start_scanning">开始扫描</string>
 </resources>
