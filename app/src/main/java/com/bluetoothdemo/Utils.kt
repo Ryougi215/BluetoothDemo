@@ -1,8 +1,5 @@
 package com.bluetoothdemo
 
-import java.nio.ByteBuffer
-import java.nio.IntBuffer
-
 class Utils {
     companion object {
         fun transformFromByteArr(sourceData: ByteArray): Int {

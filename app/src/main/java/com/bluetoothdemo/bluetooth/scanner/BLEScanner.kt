@@ -3,7 +3,6 @@ package com.bluetoothdemo.bluetooth.scanner
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.*
-import android.text.Editable
 import android.util.Log
 import com.bluetoothdemo.Constants
 import com.bluetoothdemo.Utils

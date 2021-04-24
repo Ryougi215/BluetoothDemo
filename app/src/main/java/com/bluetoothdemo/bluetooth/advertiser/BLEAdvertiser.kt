@@ -4,11 +4,9 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.AdvertiseCallback
 import android.bluetooth.le.AdvertiseData
 import android.bluetooth.le.AdvertiseSettings
-import android.bluetooth.le.BluetoothLeAdvertiser
 import android.util.Log
 import com.bluetoothdemo.Constants
 import com.bluetoothdemo.Utils
-import com.bluetoothdemo.bluetooth.scanner.BLEScanner
 
 class BLEAdvertiser {
     companion object {
